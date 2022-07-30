@@ -15,7 +15,7 @@ npm i # install dependencies
 ```
 npm start
 ```
-GET in postman [http://localhost:8080/api/contacts](http://localhost:8080/api/contacts) with the following headers: 
+Paste in postman this URL: [http://localhost:8080/api/contacts](http://localhost:8080/api/contacts) and add the following headers: 
 
 ```
 key=token
