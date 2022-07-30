@@ -15,6 +15,12 @@ npm i # install dependencies
 ```
 npm start
 ```
-GET in postman [http://localhost:8080/api/contacts](http://localhost:8080/api/contacts) with headers `key=token` and `value=emicamimicha`.
+GET in postman [http://localhost:8080/api/contacts](http://localhost:8080/api/contacts) with the following headers: 
+
+```
+key=token
+
+value=emicamimicha
+```
 
 
