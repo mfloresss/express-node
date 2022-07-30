@@ -11,7 +11,7 @@ cd express-node
 npm i # install dependencies
 ```
 
-### Run the app
+## Run the app
 ```
 npm start
 ```
