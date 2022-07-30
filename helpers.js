@@ -19,11 +19,11 @@ const generateId = ({ length }) => {
   return result;
 };
 
-const findContact = ({ contacts, email }) => {
-  const indexContact = contacts.findIndex((contact) => contact.email === email);
-  const contactData = contacts.find((contact) => contact.email === email);
+const findContact = ({ contacts, id }) => {
+  const indexContactFind = contacts.findIndex((contact) => contact.id === id);
+  const contactDataFind = contacts.find((contact) => contact.id === id);
 
-  return { indexContact, contactData };
+  return { indexContactFind, contactDataFind };
 };
 
 // const handdleContact = (contact, contacts, method) => {

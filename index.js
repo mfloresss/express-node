@@ -8,7 +8,6 @@ const port = process.env.PORT || 8080;
 const routes = require("./index.routes");
 
 function authCheck(req, res, next) {
-  console.log();
   if (req.headers.token === TOKEN) {
     return next();
   }
@@ -18,4 +17,4 @@ function authCheck(req, res, next) {
 app.use(bodyParser());
 app.use(authCheck, routes);
 
-app.listen(port, () => console.log(`Server on port ${port}`));
+app.listen(port, () => console.log(`Server on port http://localhost:${port}`));

@@ -11,7 +11,10 @@ const path = "./contacts.json";
 
 route.get("/api/contacts", (req, res) => {
   try {
-    if (contacts.length) return res.status(200).send(contacts);
+    if (contacts.length) {
+      console.log({ GET: contacts });
+      return res.status(200).send(contacts);
+    }
 
     res.status(404).send({ detail: "Contacts not found" });
   } catch (err) {
@@ -24,7 +27,10 @@ route.get("/api/contacts/:id", (req, res) => {
   try {
     const contactFind = contacts.find(({ id }) => id === req.params.id);
 
-    if (contactFind) return res.status(200).send(contactFind);
+    if (contactFind) {
+      console.log({ GET: contactFind });
+      return res.status(200).send(contactFind);
+    }
 
     res.status(404).send({ detail: "Contact not found" });
   } catch (err) {
@@ -37,26 +43,20 @@ route.post("/api/contacts", (req, res) => {
   try {
     const contact = req.body;
 
-    if (
-      contact.hasOwnProperty("name") &&
-      contact.hasOwnProperty("age") &&
-      contact.hasOwnProperty("email")
-    ) {
+    if (contact.name && contact.age && contact.email) {
       const contactExist = contacts.find(
         ({ email }) => email === contact.email
       );
       if (!contactExist) {
-        const newContactId = generateId({ length: 30 });
+        const newContact = { id: generateId({ length: 30 }), ...contact };
 
-        contacts.push({ id: newContactId, ...contact });
-
+        contacts.push(newContact);
         writeFileSync(path, JSON.stringify(contacts), (err) => {
           throw new Error(err);
         });
 
-        return res
-          .status(201)
-          .send(contacts.find(({ id }) => id === newContactId));
+        console.log({ POST: newContact });
+        return res.status(201).send(newContact);
       }
       return res
         .status(400)
@@ -69,39 +69,35 @@ route.post("/api/contacts", (req, res) => {
   }
 });
 
-route.put("/api/contacts/:email", (req, res) => {
+route.put("/api/contacts/:id", (req, res) => {
   try {
-    const { indexContact, contactData } = findContact({
+    const { indexContactFind, contactDataFind } = findContact({
       contacts,
-      email: req.params.email,
+      id: req.params.id,
     });
-    const contact = req.body;
 
-    if ((indexContact && contactData) !== undefined) {
+    const contactData = req.body;
+
+    if ((indexContactFind && contactDataFind) !== undefined) {
       const newData = {
+        ...contactDataFind,
         ...contactData,
-        ...contact,
       };
 
-      if (
-        contact.hasOwnProperty("name") &&
-        contact.hasOwnProperty("age") &&
-        contact.hasOwnProperty("email")
-      ) {
+      if (contactData.name && contactData.age && contactData.email) {
         const contactExist = contacts.find(
           ({ email }) => email === newData.email
         );
 
         if (!contactExist) {
-          contacts[indexContact] = newData;
+          contacts[indexContactFind] = newData;
 
           writeFileSync(path, JSON.stringify(contacts), (err) => {
             throw new Error(err);
           });
 
-          return res
-            .status(201)
-            .send(contacts.find(({ id }) => id === newData.id));
+          console.log({ PUT: newData });
+          return res.status(201).send(newData);
         }
         return res.status(400).send({
           detail: "Already exist a person with same email",
@@ -119,23 +115,23 @@ route.put("/api/contacts/:email", (req, res) => {
 });
 
 route.delete("/api/contacts/:id", (req, res) => {
-  const { id } = req.params;
   try {
-    const newContactsList = [];
-    if (contacts.find((contact) => contact.id === id)) {
-      for (i = 0; i < contacts.length; i++) {
-        if (contacts[i].id !== id) newContactsList.push(contacts[i]);
-      }
-      const contactRemove = contacts.find((contact) => contact.id === id);
+    const { id } = req.params;
+
+    let newContactsList = [];
+    const contactExist = contacts.find((contact) => contact.id === id);
+
+    if (contactExist) {
+      newContactsList = contacts.filter((contact) => contact.id !== id);
 
       writeFileSync(path, JSON.stringify(newContactsList), (err) => {
         throw new Error(err);
       });
 
-      return res.status(201).send(contactRemove);
+      console.log({ DELETE: contactExist });
+      return res.status(201).send(contactExist);
     }
     res.status(400).send({ detail: "Contact not found" });
-    console.log(newContactsList);
   } catch (err) {
     console.log(err);
     res.status(500).send({ detail: err });
